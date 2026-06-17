@@ -1,6 +1,12 @@
 # Ubuntu/Pop!_OS Package Management Toolkit
 
-**Complete system for finding, managing, and auditing packages across apt, snap, and flatpak.**
+**Solve the package manager visibility problem on Ubuntu/Pop!_OS.**
+
+Finding out where a package is installed from is hard when apt, snap, and flatpak all coexist.
+This toolkit is built for people who just want to know what is installed, where it came from, and the exact commands to remove it.
+No multiple GUIs, no confusing selection prompts, no guesswork.
+
+It also helps you find duplicate installations and remove versions that do not suit your needs, such as sandboxed apps like Siril that require plugins and do not work well in isolated environments.
 
 ---
 
