@@ -374,7 +374,7 @@ fi
 
 ## File Organization
 
-Recommend organizing scripts and outputs:
+Recommend organising scripts and outputs:
 
 ```
 ~/scripts/

@@ -8,8 +8,6 @@ sudo cp find-and-manage-package.sh /usr/local/bin/find-package
 sudo cp find-comprehensive.sh /usr/local/bin/find-package-deep
 ```
 
-## For Your Cedilla Situation (Right Now)
-
 ### Step 1: Find It
 
 ```bash

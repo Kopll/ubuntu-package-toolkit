@@ -30,7 +30,7 @@
 
 set -o pipefail
 
-# Color codes for output readability
+# Colour codes for output readability
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -69,7 +69,7 @@ print_subheader() {
 
 ###############################################################################
 # FUNCTION: print_found
-# Print a found package with color coding
+# Print a found package with colour coding
 ###############################################################################
 print_found() {
     printf "${GREEN}[+]${RESET} %s\n" "$1"

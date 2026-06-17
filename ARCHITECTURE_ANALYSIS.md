@@ -2,7 +2,7 @@
 
 ## The Problem You Identified
 
-Your cedilla case reveals a fundamental flaw in **single-layer search**:
+This example highlights a fundamental limitation of **single-layer search**:
 
 ```bash
 # Naive approach (original script)
@@ -280,9 +280,9 @@ Layers are ordered **reliability-to-completeness**.
 
 ---
 
-## Cedilla Case Study: Why Both Searches Failed
+## Case Study: Why Both Searches Failed
 
-Your system state:
+Example system state:
 ```
 /etc/profile.d/cedilla-portuguese.sh         ← Orphaned config (L2)
 dev.mariinkys.Cedilla (Flatpak)              ← Real app (L1)
@@ -291,9 +291,9 @@ dev.mariinkys.Cedilla (Flatpak)              ← Real app (L1)
 ```
 
 **Why Script 1 failed**:
-- L1 search for "ced" didn't match "dev.mariinkys.Cedilla"
-- L1 search for "cedilla" (lowercase) but flatpak shows "Cedilla" (uppercase)
-- Regex is case-sensitive by default
+- L1 search for "ced" didn't match `dev.mariinkys.Cedilla`
+- L1 search for "cedilla" (lowercase) missed the uppercase form
+- Regex matching is strict unless case-insensitive mode is enabled
 
 **Why Script 2 would succeed**:
 - L2 finds `/etc/profile.d/cedilla-portuguese.sh`
@@ -301,10 +301,7 @@ dev.mariinkys.Cedilla (Flatpak)              ← Real app (L1)
 - L3 finds system libraries
 - All layers combined = complete picture
 
-**Why we didn't use Script 2 on your system**:
-- Test environment doesn't have cedilla installed
-- locate database not populated
-- But the **logic is sound** and would work on your real system
+**Note**: the same layered, case-insensitive search approach applies to names with mixed case and alternate naming styles.
 
 ---
 
@@ -320,7 +317,7 @@ dev.mariinkys.Cedilla (Flatpak)              ← Real app (L1)
 - Educational
 - Handles edge cases
 
-**Your cedilla case** would be solved by:
+**This case study** would be solved by:
 
 ```bash
 # First, understand it fully

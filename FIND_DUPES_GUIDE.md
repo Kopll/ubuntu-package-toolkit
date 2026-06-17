@@ -109,9 +109,9 @@ apt,gimp,flatpak,org.gimp.GIMP
 
 Meaning: Firefox is installed three times via different package managers.
 
-### Color Coding
+### Colour Coding
 
-| Color | Manager | Meaning |
+| Colour | Manager | Meaning |
 |-------|---------|---------|
 | 🟢 Green | APT | System package (tightest integration) |
 | 🔵 Blue | FLATPAK | Portable containerized app |
@@ -259,7 +259,7 @@ flatpak remove org.gimp.GIMP
 
 ## Advanced Usage
 
-### Analyze Over Time
+### Analyse Over Time
 
 ```bash
 # Create audit snapshots
@@ -364,16 +364,16 @@ snap list | awk 'NR>1 {print $1}'
 flatpak list --app | awk 'NR>1 {print $2}'
 ```
 
-### Name Normalization
+### Name Normalisation
 
-The script normalizes package names to match duplicates despite naming inconsistencies:
+The script normalises package names to match duplicates despite naming inconsistencies:
 
 ```
 Reverse domain notation:
   org.mozilla.firefox → firefox
   org.gimp.GIMP → gimp
   
-Hyphen/underscore normalization:
+Hyphen/underscore normalisation:
   python3-pip → python, pip
   vim-nox → vim
   
@@ -385,7 +385,7 @@ Version suffix removal:
 ### Fuzzy Matching
 
 Duplicates identified by:
-1. **Exact match** - Same normalized name
+1. **Exact match** - Same normalised name
 2. **Base name match** - Same core package name
 3. **Keyword overlap** - At least 2 shared keywords (requires both conditions)
 
@@ -408,7 +408,7 @@ sudo apt install snapd
 
 ### "No duplicates found!"
 
-Your system is optimized! You're not installing applications multiple ways. Good job.
+Your system is optimised! You're not installing applications multiple ways. Good job.
 
 ### Slow on First Run
 

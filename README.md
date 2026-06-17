@@ -21,7 +21,6 @@ A professional-grade toolkit with **three complementary scripts** that work toge
 | **TOOLKIT_QUICK_REFERENCE.md** | Decision matrix, workflows, cheat sheet ⭐ **START HERE** | 5 min |
 | **FIND_DUPES_GUIDE.md** | Complete duplicate finder documentation | 10 min |
 | **ARCHITECTURE_ANALYSIS.md** | Design decisions and tradeoffs | 5 min |
-| **CEDILLA_REMOVAL_GUIDE.md** | Real-world multi-layer example | 5 min |
 | **QUICK_REFERENCE.md** | Original quick-search reference | 3 min |
 
 ---
@@ -78,7 +77,7 @@ It has:
 ### For Finding Packages
 → See **Script 1: find-and-manage-package.sh**
 - Quick lookups
-- Case-insensitive search (your cedilla issue fixed!)
+- Case-insensitive search 
 - Removal command generation
 
 ### For Deep Investigations
@@ -118,34 +117,13 @@ It has:
 ✅ CSV export  
 ✅ Deep investigation capability  
 
-### Script 3: find-package-dupes.sh (NEW)
+### Script 3: find-package-dupes.sh
 ✅ Finds ALL duplicate installations  
 ✅ Fuzzy name matching (different naming conventions)  
 ✅ System efficiency score  
 ✅ Cleanup recommendations  
 ✅ CSV export for analysis  
 ✅ Summary statistics  
-
----
-
-## 💡 Real-World Example: Your Cedilla Issue
-
-### Before (Problem)
-```bash
-$ ./find-and-manage-package.sh "ced"
-# Not found - can't find dev.mariinkys.Cedilla (flatpak)
-```
-
-### Now (Solution)
-```bash
-$ ./find-and-manage-package.sh "cedilla"
-# ✅ FOUND: dev.mariinkys.Cedilla (flatpak)
-```
-
-**What changed:**
-- Script now does **case-insensitive search by default**
-- Supports strict-case mode with `-I` flag if you need it
-- Fixed duplicate argument parsing bug
 
 ---
 
@@ -267,7 +245,7 @@ Modern Linux installs packages **many ways**. A single app might be:
 ### Workflow 4: CSV Export for Analysis
 ```bash
 ./find-package-dupes.sh --csv > duplicates.csv
-# Open in LibreOffice Calc, analyze, make decisions
+# Open in LibreOffice Calc, analyse, make decisions
 ```
 
 ### Workflow 5: Complete System Audit
@@ -289,12 +267,12 @@ snap remove firefox    # or flatpak remove org.mozilla.firefox
 
 ## ✅ Professional Quality
 
-- **CTO-grade architecture** - Separation of concerns, auditable code
+- **Architecture** - Separation of concerns, auditable code
 - **No auto-removal** - All operations read-only, human review required
 - **Comprehensive docs** - Every function documented
 - **Test coverage** - Unit tests included
 - **Production-ready** - Safe for critical systems
-- **Case-insensitive search** - Your original cedilla issue fixed
+- **Case-insensitive search**
 - **Multiple output formats** - Human-readable + CSV export
 
 ---
@@ -338,8 +316,6 @@ Choose one:
 | Command syntax? | TOOLKIT_QUICK_REFERENCE.md (cheat sheet section) |
 | Duplicate finder guide? | FIND_DUPES_GUIDE.md |
 | Design/architecture? | ARCHITECTURE_ANALYSIS.md |
-| Your specific case (cedilla)? | CEDILLA_REMOVAL_GUIDE.md |
-
 ---
 
 ## 🎯 Most Common Commands
@@ -376,7 +352,7 @@ Choose one:
 You now have a **complete, professional-grade package management toolkit** for Ubuntu/Pop!_OS that:
 
 ✅ Finds packages across all installation methods  
-✅ Handles case-insensitive matching (cedilla issue fixed!)  
+✅ Handles case-insensitive matching   
 ✅ Detects duplicate installations  
 ✅ Provides cleanup recommendations  
 ✅ Generates audit reports  
@@ -388,7 +364,7 @@ You now have a **complete, professional-grade package management toolkit** for U
 
 ## File Organization
 
-Your toolkit is organized as:
+Your toolkit is organised as:
 
 ```
 scripts/
@@ -399,7 +375,6 @@ scripts/
 ├── TOOLKIT_QUICK_REFERENCE.md      (START HERE - 5 min guide)
 ├── FIND_DUPES_GUIDE.md             (Duplicate finder detailed guide)
 ├── ARCHITECTURE_ANALYSIS.md        (Design decisions)
-├── CEDILLA_REMOVAL_GUIDE.md        (Real-world multi-layer example)
 └── QUICK_REFERENCE.md              (Original quick-search reference)
 ```
 
