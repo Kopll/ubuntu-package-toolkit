@@ -95,13 +95,26 @@ print_package_entry() {
 }
 
 ###############################################################################
+# FUNCTION: to_fuzzy_regex
+# Make a search pattern tolerant of naming-convention differences between
+# package managers (spaces vs dashes vs dots vs underscores vs nothing), so
+# e.g. "visual studio code" matches "visual-studio-code" or
+# "com.visualstudio.code". Only literal spaces are touched, so existing
+# regex syntax in the pattern (e.g. "python.*") keeps working.
+###############################################################################
+to_fuzzy_regex() {
+    local pattern="$1"
+    echo "${pattern// /[-_. ]*}"
+}
+
+###############################################################################
 # FUNCTION: search_apt
 # Search installed packages in apt/dpkg database
 # Returns: list of matching package names
 # Note: Case-insensitive by default (use -I flag to make case-sensitive)
 ###############################################################################
 search_apt() {
-    local pattern="$1"
+    local pattern=$(to_fuzzy_regex "$1")
     local grep_flags="-E"
     [[ "$CASE_SENSITIVE" -eq 0 ]] && grep_flags="-iE"
     dpkg -l 2>/dev/null | grep -E "^ii" | awk '{print $2}' | grep $grep_flags "$pattern" || true
@@ -114,7 +127,7 @@ search_apt() {
 # Note: Case-insensitive by default (use -I flag to make case-sensitive)
 ###############################################################################
 search_snap() {
-    local pattern="$1"
+    local pattern=$(to_fuzzy_regex "$1")
     local grep_flags="-E"
     [[ "$CASE_SENSITIVE" -eq 0 ]] && grep_flags="-iE"
     if command -v snap &>/dev/null; then
@@ -125,15 +138,28 @@ search_snap() {
 ###############################################################################
 # FUNCTION: search_flatpak
 # Search installed flatpak packages
-# Returns: list of matching flatpak package names
+# Returns: list of matching flatpak application IDs
 # Note: Case-insensitive by default (use -I flag to make case-sensitive)
+#
+# `flatpak list` does not print a header row, and its display name column
+# can contain spaces (e.g. "Visual Studio Code"). The previous implementation
+# used default awk whitespace-splitting and skipped row 1 as if it were a
+# header - this silently dropped the first installed app and, for any app
+# whose display name had more than one word, matched/returned a fragment of
+# the name instead of the actual application ID. Tab-delimited --columns
+# output fixes both, and matching against the display name too lets partial,
+# human-readable searches (e.g. "notepad") hit even when the ID differs
+# (e.g. "com.github.dail8859.NotepadNext").
 ###############################################################################
 search_flatpak() {
-    local pattern="$1"
+    local pattern=$(to_fuzzy_regex "$1")
     local grep_flags="-E"
     [[ "$CASE_SENSITIVE" -eq 0 ]] && grep_flags="-iE"
     if command -v flatpak &>/dev/null; then
-        flatpak list --app 2>/dev/null | awk 'NR>1 {print $2}' | grep $grep_flags "$pattern" || true
+        flatpak list --app --columns=name,application 2>/dev/null | \
+            awk -F'\t' '{print $1 "\t" $2}' | \
+            grep $grep_flags "$pattern" | \
+            cut -f2 || true
     fi
 }
 
@@ -179,6 +205,7 @@ validate_input() {
         printf "${BOLD}Examples:${RESET}\n"
         printf "  %s 'siril'              (finds siril, Siril, SIRIL, etc.)\n" "$0"
         printf "  %s 'cedilla'            (finds dev.mariinkys.Cedilla)\n" "$0"
+        printf "  %s 'opera gx'           (finds com.opera.opera-gx; spaces match -/./_)\n" "$0"
         printf "  %s -I 'python'          (exact case match only)\n" "$0"
         printf "  %s 'python.*'           (regex pattern)\n\n" "$0"
         exit 1

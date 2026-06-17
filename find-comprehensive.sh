@@ -84,6 +84,19 @@ print_result() {
 }
 
 ###############################################################################
+# FUNCTION: to_fuzzy_regex
+# Make a search pattern tolerant of naming-convention differences between
+# package managers (spaces vs dashes vs dots vs underscores vs nothing), so
+# e.g. "visual studio code" matches "visual-studio-code" or
+# "com.visualstudio.code". Only literal spaces are touched, so existing
+# regex syntax in the pattern (e.g. "python.*") keeps working.
+###############################################################################
+to_fuzzy_regex() {
+    local pattern="$1"
+    echo "${pattern// /[-_. ]*}"
+}
+
+###############################################################################
 # FUNCTION: validate_input
 ###############################################################################
 validate_input() {
@@ -108,15 +121,16 @@ validate_input() {
 # LAYER 1: Package Manager Databases
 ###############################################################################
 layer_1_packages() {
-    local pattern="$1"
+    local raw_pattern="$1"
+    local pattern=$(to_fuzzy_regex "$raw_pattern")
     local count=0
     local grep_flags="-E"
     [[ "$CASE_SENSITIVE" -eq 0 ]] && grep_flags="-iE"
-    
+
     [[ -n "$SEARCH_LAYER" && "$SEARCH_LAYER" != "1" ]] && return
-    
+
     print_section 1 "Package Managers (apt, snap, flatpak)"
-    
+
     # APT
     local apt_matches=$(dpkg -l 2>/dev/null | grep -E "^ii" | awk '{print $2}' | grep $grep_flags "$pattern" || true)
     if [[ -n "$apt_matches" ]]; then
@@ -128,7 +142,7 @@ layer_1_packages() {
             fi
         done <<< "$apt_matches"
     fi
-    
+
     # SNAP
     if command -v snap &>/dev/null; then
         local snap_matches=$(snap list 2>/dev/null | awk 'NR>1 {print $1}' | grep $grep_flags "$pattern" || true)
@@ -142,10 +156,19 @@ layer_1_packages() {
             done <<< "$snap_matches"
         fi
     fi
-    
+
     # FLATPAK
+    # `flatpak list` has no header row, and its display-name column can
+    # contain spaces (e.g. "Visual Studio Code"). Default awk whitespace
+    # splitting plus an `NR>1` header skip silently drops the first app and
+    # mis-extracts the ID for any multi-word name - tab-delimited --columns
+    # output fixes both, and matching the display name too lets partial,
+    # human-readable searches succeed even when the ID differs.
     if command -v flatpak &>/dev/null; then
-        local flatpak_matches=$(flatpak list --app 2>/dev/null | awk 'NR>1 {print $2}' | grep $grep_flags "$pattern" || true)
+        local flatpak_matches=$(flatpak list --app --columns=name,application 2>/dev/null | \
+            awk -F'\t' '{print $1 "\t" $2}' | \
+            grep $grep_flags "$pattern" | \
+            cut -f2 || true)
         if [[ -n "$flatpak_matches" ]]; then
             while IFS= read -r pkg; do
                 if [[ -n "$pkg" ]]; then
@@ -156,7 +179,7 @@ layer_1_packages() {
             done <<< "$flatpak_matches"
         fi
     fi
-    
+
     [[ $count -eq 0 ]] && printf "  ${DIM}(no matches)${RESET}\n"
     return $count
 }
@@ -312,11 +335,11 @@ layer_5_user_paths() {
 # LAYER 6: dpkg File Ownership Queries
 ###############################################################################
 layer_6_dpkg_ownership() {
-    local pattern="$1"
+    local pattern=$(to_fuzzy_regex "$1")
     local count=0
     local grep_flags="-E"
     [[ "$CASE_SENSITIVE" -eq 0 ]] && grep_flags="-iE"
-    
+
     [[ -n "$SEARCH_LAYER" && "$SEARCH_LAYER" != "6" ]] && return
     
     print_section 6 "dpkg File Ownership (what package owns a file)"

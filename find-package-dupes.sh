@@ -182,19 +182,26 @@ enumerate_snap() {
 ###############################################################################
 # FUNCTION: enumerate_flatpak
 # Get all installed flatpak applications
+#
+# `flatpak list` has no header row, and its display-name column can contain
+# spaces (e.g. "Visual Studio Code"). Default awk whitespace splitting plus
+# an `NR>1` header skip silently dropped the first installed app and
+# mis-extracted the ID as a name fragment for any multi-word name, which
+# corrupted FLATPAK_PKGS and broke duplicate detection against apt/snap.
+# Tab-delimited --columns output extracts the real application ID instead.
 ###############################################################################
 enumerate_flatpak() {
     if ! command -v flatpak &>/dev/null; then
         [[ $VERBOSE -eq 1 ]] && printf "${DIM}(flatpak not installed)${RESET}\n"
         return
     fi
-    
+
     local count=0
     while IFS= read -r pkg; do
         [[ -z "$pkg" ]] && continue
         FLATPAK_PKGS["$pkg"]=1
         ((count++))
-    done < <(flatpak list --app 2>/dev/null | awk 'NR>1 {print $2}' | sort -u)
+    done < <(flatpak list --app --columns=application 2>/dev/null | sort -u)
     
     [[ $VERBOSE -eq 1 ]] && printf "  FLATPAK: %4d packages\n" "$count"
 }
